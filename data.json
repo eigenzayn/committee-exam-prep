@@ -1,0 +1,359 @@
+[
+ {
+  "title": "Bagian 1 - Ketua: Alois Zoitl (tesis)",
+  "file": "audio/part1.mp3",
+  "duration": 386.6,
+  "cards": [
+   {
+    "n": 1,
+    "q": "What problem did you solve, and why does it matter?",
+    "say": "Many thermal processes have a fast flow and a slow temperature field. CFD must use the small time step of the flow for the whole process, so it is slow. Recurrence CFD records the transport once and replays it, which is much faster. But it was built for passive scalars. My thesis asks whether replay still works when the temperature also drives the flow, as in a buoyant jet.",
+    "inti": "Aliran cepat, suhu lambat. CFD mahal. rCFD cepat tapi dibuat untuk skalar pasif. Saya uji untuk suhu yang ikut menggerakkan aliran.",
+    "t": 6.5
+   },
+   {
+    "n": 2,
+    "q": "What is your data? How was the database made?",
+    "say": "The data come from one reference CFD simulation of a laminar buoyant jet. At each recorded frame the solver stores which fraction of each cell moves to each neighbouring cell. That is a sparse transport map. Each database has 600 frames at one-second intervals, together with the recorded diffusivity. The adiabatic database needs 2.4 GiB on disk.",
+    "inti": "Satu simulasi CFD acuan maka 600 frame, tiap 1 detik, peta perpindahan antar-sel. 2,4 GiB.",
+    "t": 60.1
+   },
+   {
+    "n": 3,
+    "q": "Why a data-based method and not just CFD or a neural network?",
+    "say": "CFD is accurate but slow. A neural network needs many paired states and gives no guarantee of conservation. The replay reuses the recorded transport of the real solver, so it conserves heat by construction and runs two to three orders of magnitude faster. The price is that it can only reproduce motion that is in the recording.",
+    "inti": "rCFD memakai transport asli dari solver: konservatif, cepat. Batasnya: hanya gerak yang terekam.",
+    "t": 109.3
+   },
+   {
+    "n": 4,
+    "q": "What is new in your work?",
+    "say": "First, I showed why the standard replay fails for this case: numerical diffusion thickens the thermocline, and because the outlet lies just below it, too much heat leaves the domain. Second, I added a conservative correction that moves heat up the local gradient, bounded by the local extremes and weighted towards the vertical. It reduces the thermocline thickness from 15.7 mm to between 5.3 and 4.0 mm, compared with 5.0 mm in the reference. Third, I showed that a database belongs to a flow regime, not just to one case.",
+    "inti": "Diagnosis (difusi numerik dan outlet di bawah termoklin) maka koreksi terbatas arah vertikal maka 15,7 mm jadi 5,3 sampai 4,0 mm (acuan 5,0) maka database milik rezim aliran.",
+    "t": 156.5
+   },
+   {
+    "n": 5,
+    "q": "How much faster is it?",
+    "say": "In the closed case, the reference simulation needed 569 minutes and one extended replay about 1.9 minutes, a speed-up of about 300. In the vessel the speed-ups were about 1,250 and 790. The speed-up does not include the cost of making the database, which is one reference simulation.",
+    "inti": "569 menit dibanding 1,9 menit kira-kira 300 kali. Biaya membuat database (satu CFD) tidak termasuk.",
+    "t": 225.1
+   },
+   {
+    "n": 6,
+    "q": "What are the limitations?",
+    "say": "The reference is a simulation, so agreement is with a simulation and not with an experiment. I used one mesh and one fluid, so the selected correction strengths are results for this case, not general settings. And the replay cannot create motion that is missing from the database, for example the plume of a floor feed when the database was recorded with a lid feed.",
+    "inti": "Acuan adalah simulasi, satu mesh, satu fluida, gerak yang tak terekam tak bisa muncul.",
+    "t": 272.0
+   },
+   {
+    "n": 7,
+    "q": "What would you do differently, or next?",
+    "say": "I would let a small neural network predict the local correction strength from the replayed field, inside the limiter, so conservation and the bounds stay guaranteed. I would also switch between databases according to the flow state, and I would compare with measurements of a buoyant jet.",
+    "inti": "Jaringan kecil memprediksi kekuatan koreksi (tetap di dalam limiter), ganti database sesuai rezim, bandingkan dengan eksperimen.",
+    "t": 314.6
+   },
+   {
+    "n": 8,
+    "q": "Where can this be used in practice?",
+    "say": "Wherever a thermal process must be simulated quickly and often: thermal storage, a steel ladle, a chemical reactor, or a digital twin that updates a model with plant data and must keep pace with the process.",
+    "inti": "Penyimpanan panas, ladle baja, reaktor, digital twin.",
+    "t": 354.5
+   }
+  ]
+ },
+ {
+  "title": "Bagian 2 - ML and Perception: Pieter-Jan Hoedt",
+  "file": "audio/part2.mp3",
+  "duration": 682.3,
+  "cards": [
+   {
+    "n": 9,
+    "q": "What is a neuron? What happens in a layer?",
+    "say": "A neuron computes a weighted sum of its inputs plus a bias and then applies an activation function. A layer does this for many neurons at once, so it is a matrix multiplication followed by an element-wise non-linearity.",
+    "inti": "Jumlah berbobot dan bias, lalu aktivasi. Satu layer adalah perkalian matriks dan fungsi non-linear per elemen.",
+    "t": 6.0
+   },
+   {
+    "n": 10,
+    "q": "Why do we call it a network? What is deep learning?",
+    "say": "Because the neurons are connected: the outputs of one layer are the inputs of the next. A deep network is the same structure with many hidden layers. The script compares them: an MLP has one or a few hidden layers with tanh or sigmoid, a deep network has many layers with hundreds of neurons and uses ReLU or SELU.",
+    "inti": "Output layer satu adalah input layer berikutnya. Deep adalah banyak layer.",
+    "t": 43.3
+   },
+   {
+    "n": 11,
+    "q": "Why must the activation be non-linear? Can it be linear?",
+    "say": "It can be linear, but then the whole network collapses to one linear map, because a product of matrices is again a matrix. Then depth adds nothing. The classic example is XOR: a single-layer network cannot solve it, even with a sigmoid, but two layers with a ReLU can.",
+    "inti": "Aktivasi linear maka seluruh jaringan adalah satu matriks. XOR butuh dua layer dan non-linear.",
+    "t": 84.5
+   },
+   {
+    "n": 12,
+    "q": "Name some activation functions. What is special about them?",
+    "say": "Sigmoid, which squashes to between 0 and 1 and is used for probabilities. Tanh. ReLU, which is max of zero and s and does not saturate for positive inputs. ELU and SELU, where SELU comes from Linz and keeps the activations normalised. Sigmoid and tanh saturate, so their derivative becomes small, which slows learning in deep networks.",
+    "inti": "Sigmoid, tanh, ReLU, ELU, SELU (dari Linz). Sigmoid atau tanh jenuh maka turunan kecil.",
+    "t": 126.1
+   },
+   {
+    "n": 13,
+    "q": "Why use deep networks instead of simpler models? (Universal approximation)",
+    "say": "The universal approximation theorem says that one hidden layer with enough units can approximate any reasonable function on a compact set to any accuracy. So in principle one layer is enough. In practice, deep networks need far fewer units for the same function and learn useful features layer by layer, and they can be trained well with backpropagation.",
+    "inti": "Satu hidden layer cukup secara teori (UAT, jumlah unit terbatas tapi bisa besar). Deep adalah lebih efisien dan belajar fitur bertingkat.",
+    "t": 178.8
+   },
+   {
+    "n": 14,
+    "q": "How do we train a network? (ERM, in words)",
+    "say": "We have training pairs x n, y n and a model g of x and w. We choose a loss L and minimise the average loss over the training data, the empirical risk. What we really want is a small risk on new data, the generalisation risk, so we check it on a test set.",
+    "inti": "Data dan model dan loss maka rata-rata loss di data latih diminimalkan (ERM) dengan gradient descent. Tujuan sebenarnya: risiko di data baru.",
+    "t": 229.3
+   },
+   {
+    "n": 15,
+    "q": "Explain backpropagation and derive the delta error.",
+    "say": "First a forward pass, storing all pre-activations and activations. The delta error of a layer is the derivative of the loss with respect to its pre-activations. At the output it is often simply y hat minus y. Then we go backwards: each delta is the next delta times the weight matrix times the derivative of the activation. The weight gradient is the outer product of the activation below and the delta above.",
+    "inti": "delta adalah turunan loss terhadap pre-activation. Mundur: delta atas kali W kali f aksen. Gradien adalah aktivasi bawah kali delta atas.",
+    "t": 274.8
+   },
+   {
+    "n": 16,
+    "q": "What are vanishing and exploding gradients?",
+    "say": "The recursion multiplies the delta by W times the activation slope in every layer. If this factor is smaller than one, the deltas shrink layer by layer and the early layers barely learn. If it is larger than one, they grow and training becomes unstable. Sepp Hochreiter described the vanishing gradient in 1991. Remedies are good initialisation, ReLU or SELU, normalisation and, for sequences, the LSTM.",
+    "inti": "Faktor W kali turunan aktivasi per layer kurang dari satu maka hilang, lebih dari satu maka meledak. Hochreiter 1991.",
+    "t": 330.8
+   },
+   {
+    "n": 17,
+    "q": "Binary classification with labels 0/1: what is the output? Why sigmoid, not a step function?",
+    "say": "One output unit with a sigmoid, read as the probability of class 1, trained with binary cross-entropy. A step function would also give 0 or 1, but its derivative is zero almost everywhere and undefined at the jump, so backpropagation gets no gradient. The sigmoid is smooth, so it can be trained with gradient descent.",
+    "inti": "Sigmoid adalah probabilitas, bisa diturunkan. Step function: turunan nol maka tidak bisa belajar.",
+    "t": 386.0
+   },
+   {
+    "n": 18,
+    "q": "Gradient descent, SGD and mini-batches. How does the learning rate matter?",
+    "say": "Full-batch gradient descent averages the gradient over all training samples before one step, which is expensive for large data. Stochastic gradient descent uses a small random mini-batch for each step, so steps are cheap and noisy. One pass over the data is an epoch. If the learning rate is too high, the update overshoots. If it is too low, progress is slow. A larger batch gives a less noisy gradient estimate, so a somewhat larger learning rate is often possible.",
+    "inti": "Full batch adalah semua data per langkah (mahal). SGD adalah mini-batch acak (murah, berisik). LR besar maka meloncat, kecil maka lambat.",
+    "t": 436.3
+   },
+   {
+    "n": 19,
+    "q": "What is Adam? SGD versus Adam.",
+    "say": "Adam keeps two running averages for every parameter: the mean of past gradients and the mean of past squared gradients. It divides the step by the square root of the second one, so each parameter gets its own effective learning rate. SGD uses one learning rate for all parameters. Typical values are beta one equal to 0.9 and beta two equal to 0.999.",
+    "inti": "Adam adalah momentum (rata-rata gradien) dan skala per parameter (rata-rata gradien kuadrat).",
+    "t": 498.4
+   },
+   {
+    "n": 20,
+    "q": "CNNs: what is a receptive field? How can it be increased? What does pooling do?",
+    "say": "In a convolution each neuron sees only a small local patch of the input, its receptive field, and all positions share the same kernel weights. The receptive field grows with more layers, larger kernels, pooling or strides. Pooling, for example max pooling, summarises a neighbourhood and reduces the size of the feature map.",
+    "inti": "Receptive field adalah bagian input yang dilihat satu neuron. Tambah layer atau kernel atau pooling atau stride maka makin luas.",
+    "t": 545.8
+   },
+   {
+    "n": 21,
+    "q": "You must predict one value for a whole sequence or field, not per time step. What do you do?",
+    "say": "Aggregate over the positions, for example with global average pooling, which takes the mean of each feature map and gives one vector for the whole input, followed by an output layer. Network in Network introduced this instead of several fully connected layers.",
+    "inti": "Global average pooling: rata-rata tiap feature map maka satu vektor untuk seluruh input.",
+    "t": 594.7
+   },
+   {
+    "n": 22,
+    "q": "Link to your thesis: where is machine learning in your work?",
+    "say": "The replay itself is not a neural network, but it is learning from data: it reuses recorded transport from a reference simulation. The database contains many states of the same flow, so it is a good training set. A natural next step is a small network that predicts the local correction strength, trained on these states and acting inside the limiter.",
+    "inti": "rCFD adalah belajar dari data rekaman. Langkah ML berikutnya: jaringan kecil untuk kekuatan koreksi, di dalam limiter.",
+    "t": 634.4
+   }
+  ]
+ },
+ {
+  "title": "Bagian 2B - Tambahan dari pola Klambauer dan Hochreiter",
+  "file": "audio/part3.mp3",
+  "duration": 668.1,
+  "cards": [
+   {
+    "n": 23,
+    "q": "Write down a supervised data set, a model and the risk, in general, not only for networks. Explain it with linear regression.",
+    "say": "The data are pairs x n, y n drawn from an unknown distribution p of x and y. The model g of x and w can be anything: a network, a linear model or a random forest. The loss L measures one error. What we want is the generalisation risk, the expected loss over the true distribution. We cannot compute it, so we minimise its estimate on the training data, the empirical risk. For linear regression the model is w transpose x, the loss is one half of the squared residual, and minimising the empirical risk is least squares.",
+    "inti": "Data dari distribusi tak diketahui. Risiko sebenarnya adalah harapan loss (tak bisa dihitung). ERM adalah rata-rata loss di data latih. Regresi linear adalah least squares.",
+    "t": 6.2
+   },
+   {
+    "n": 24,
+    "q": "What are overfitting and underfitting? How do we estimate the generalisation error?",
+    "say": "The training error keeps falling as the model becomes more complex. The test error first falls and then rises, because a too complex model also learns the noise. That is overfitting. A too simple model has a high training and a high test error. That is underfitting. We estimate the generalisation error on data that were not used for training, a held-out test set, or with cross-validation when data are scarce.",
+    "inti": "Terlalu kompleks maka overfit (hafal noise). Terlalu sederhana maka underfit. Ukur di test set atau cross-validation.",
+    "t": 79.9
+   },
+   {
+    "n": 25,
+    "q": "Which optimizers do you know? Are there training methods besides gradient descent?",
+    "say": "Plain gradient descent and SGD on mini-batches. Adaptive learning rate methods: the delta-delta rule, AdaGrad, Adadelta and RMSprop, and Adam. Alternatives to plain first-order steps: Quickprop approximates the loss locally by a parabola and jumps to its minimum, and RProp uses only the sign of the gradient with its own step size per weight. Finally, second-order methods such as Newton's method use the curvature, the Hessian.",
+    "inti": "SGD, delta-delta, AdaGrad, RMSprop, Adam. Selain itu: Quickprop (parabola), RProp (hanya tanda gradien), Newton (Hessian).",
+    "t": 135.8
+   },
+   {
+    "n": 26,
+    "q": "Which regularization techniques do you know?",
+    "say": "Regularization controls the complexity of the model so that the test error stays low. The script lists weight decay, noise on neurons or weights, weight sharing as in CNNs, dropout, multi-task learning, growing and pruning of the network, and early stopping. Weight decay adds a penalty on the size of the weights, so every step also shrinks the weights a little.",
+    "inti": "Weight decay, noise, weight sharing, dropout, multi-task, pruning, early stopping. Weight decay adalah bobot menyusut tiap langkah.",
+    "t": 197.5
+   },
+   {
+    "n": 27,
+    "q": "Adam with L2 regularization versus AdamW: what is the difference?",
+    "say": "For plain SGD the two are the same. In Adam with L2, the decay term goes into the gradient and is then divided by the square root of v, so weights with large gradients are hardly decayed. AdamW applies the weight decay directly to the weights, outside the adaptive division.",
+    "inti": "Adam+L2: decay ikut dibagi akar v. AdamW: decay langsung ke bobot.",
+    "t": 247.0
+   },
+   {
+    "n": 28,
+    "q": "Which initialization do you know, and why this variance?",
+    "say": "We choose the variance of the weights so that the variance of the signal stays the same from layer to layer, in the forward and in the backward pass. With n inputs the variance of the pre-activation is n times the weight variance times the second moment of the input. For SELU this gives one over n, LeCun initialisation. A ReLU halves the second moment, so He initialisation uses two over n. Glorot takes the average of the forward and backward fan. Initialising all weights to zero fails, because all units stay identical.",
+    "inti": "Variansi sinyal harus tetap antar-layer. LeCun satu per n, He dua per n (ReLU memotong setengah), Glorot rata-rata maju-mundur. Nol adalah simetri.",
+    "t": 288.6
+   },
+   {
+    "n": 29,
+    "q": "Which normalizations do you know?",
+    "say": "Batch normalization standardises each unit with the mean and standard deviation of the mini-batch and then learns a scale and a shift. Layer normalization standardises over all units of one layer for one sample, so it also works with a batch size of one. RMSNorm, popular in large language models, only divides by the root mean square and drops the mean.",
+    "inti": "Batch norm: per unit, statistik mini-batch. Layer norm: per sampel, semua unit. RMSNorm: hanya bagi dengan RMS.",
+    "t": 353.1
+   },
+   {
+    "n": 30,
+    "q": "What is the spectral norm, and which structure do we want for W?",
+    "say": "The spectral norm is the largest singular value of W, the largest factor by which W can stretch a vector. In the delta recursion every layer multiplies by W, so we want the singular values close to one, an almost orthogonal matrix. Then signals and deltas keep their size. During training the norm should stay bounded, for example with weight decay or spectral normalization.",
+    "inti": "Norma spektral adalah nilai singular terbesar. Ingin W hampir ortogonal (nilai singular sekitar satu).",
+    "t": 403.5
+   },
+   {
+    "n": 31,
+    "q": "Which output activation and loss for regression and for classification? What is the output delta?",
+    "say": "For regression, a linear output with the squared loss. For two classes, a sigmoid with binary cross-entropy. For several classes, a softmax with categorical cross-entropy. For each of these matching pairs, the delta at the output is simply the prediction minus the label.",
+    "inti": "Regresi: linear dan MSE. Biner: sigmoid dan BCE. Multi-kelas: softmax dan CE. Delta output adalah y topi dikurangi y.",
+    "t": 453.1
+   },
+   {
+    "n": 32,
+    "q": "How does the LSTM solve the vanishing gradient in time?",
+    "say": "In a plain recurrent network the delta is multiplied by the recurrent weights and the activation slope at every time step, so it vanishes over long sequences. The LSTM adds a memory cell whose state is updated additively. Through this path, the constant error carousel, the error flows back without shrinking. Gates decide what is written into the cell, what is read out, and, with the forget gate, what is kept.",
+    "inti": "RNN biasa: delta dikali tiap langkah waktu maka hilang. LSTM: sel memori diperbarui dengan penjumlahan (constant error carousel), gerbang input, output, forget.",
+    "t": 505.3
+   },
+   {
+    "n": 33,
+    "q": "Write down the SVM primal. Where does the \"1\" in the constraint come from?",
+    "say": "The SVM looks for the hyperplane with the largest margin. The pair w and b can be scaled by any positive factor without changing the hyperplane, so we fix the scale by setting the closest points to exactly one. That is the canonical form, and the margin becomes two over the norm of w. Any other positive value gives the same classifier after rescaling.",
+    "inti": "Maksimalkan margin. Angka 1 hanya menetapkan skala w dan b (bentuk kanonik). Margin sama dengan dua per norma w.",
+    "t": 563.1
+   },
+   {
+    "n": 34,
+    "q": "Derive the REINFORCE loss.",
+    "say": "We maximise the expected return of a policy pi theta. The gradient of an expectation is hard because the distribution depends on theta. The log-derivative trick, the gradient of p equals p times the gradient of log p, turns it into an expectation again, which we estimate from sampled episodes. In the trajectory probability only the policy depends on theta, so the dynamics drop out. A baseline subtracted from the return reduces the variance.",
+    "inti": "Trik log-turunan maka gradien jadi ekspektasi, diestimasi dari episode. Dinamika lingkungan hilang. Baseline mengurangi variansi.",
+    "t": 613.2
+   }
+  ]
+ },
+ {
+  "title": "Bagian 3 - AI for Simulation: Stefan Pirker",
+  "file": "audio/part4.mp3",
+  "duration": 644.8,
+  "cards": [
+   {
+    "n": 35,
+    "q": "What is the CFD cascade of uncertainties? Can we trust a CFD result?",
+    "say": "Errors enter a CFD result at every level: the computational domain, the boundary conditions, the models for unresolved physics such as turbulence, the material parameters, the discretisation and the truncation. So we should never trust a stand-alone CFD result. We check it against measurements and analytic estimates. In my thesis the reference is itself a simulation, which is why I call it agreement with a simulation, not validation.",
+    "inti": "Domain, syarat batas, model fisika, parameter material, diskretisasi, pemotongan. Jangan percaya CFD saja.",
+    "t": 5.8
+   },
+   {
+    "n": 36,
+    "q": "Why the finite-volume method?",
+    "say": "The domain is split into control volumes, and for each one we balance what flows in and out through its faces. Mass, momentum and energy are conserved locally, the cell shape is not limited, and efficient iterative solvers exist.",
+    "inti": "Neraca tiap sel lewat fluks di muka sel maka konservatif lokal, bentuk sel bebas.",
+    "t": 63.2
+   },
+   {
+    "n": 37,
+    "q": "Face fluxes: upwind or central? What is numerical diffusion?",
+    "say": "The face value must be interpolated from cell values. First-order upwind takes the upstream cell value. It is stable but its truncation error acts like an extra diffusion, the numerical diffusion, and it smears sharp fronts. Central differencing is second order but can oscillate. Doubling the grid resolution halves the first-order error and quarters the second-order error. My thesis is exactly about this: the replay smears the thermocline by numerical diffusion, and the correction reverses part of it.",
+    "inti": "Upwind orde 1 adalah stabil tapi difusi numerik. Central adalah akurat tapi bisa berosilasi. Tesis saya adalah melawan difusi numerik replay.",
+    "t": 97.8
+   },
+   {
+    "n": 38,
+    "q": "Explicit or implicit time stepping?",
+    "say": "Explicit methods are easy to implement but stable only for small time steps, limited by the Courant and diffusion numbers. Implicit methods solve a system of equations for the new time level, are stable, and are the standard in CFD.",
+    "inti": "Eksplisit: mudah tapi langkah waktu kecil (Courant). Implisit: stabil, standar CFD.",
+    "t": 160.9
+   },
+   {
+    "n": 39,
+    "q": "Why is your flow laminar, and what do the dimensionless numbers say?",
+    "say": "The Reynolds number is Re equals U D over nu, about 99, well below turbulence for a free jet, so no turbulence model is needed. The Froude number is 0.74, so buoyancy and inertia are of the same order and the jet bends upwards. The Péclet number is about 4,100, so advection dominates molecular diffusion by more than three orders of magnitude. That is why numerical diffusion matters so much here.",
+    "inti": "Re sekitar 99 laminar, Fr 0,74 jet membelok ke atas, Pe sekitar 4100 difusi molekuler sangat kecil.",
+    "t": 198.9
+   },
+   {
+    "n": 40,
+    "q": "How do you model buoyancy? (Boussinesq)",
+    "say": "In the Boussinesq approximation the density is kept constant everywhere except in the gravity term of the momentum equation, where it varies with temperature. That is what makes the temperature an active, non-passive scalar.",
+    "inti": "Densitas hanya berubah di suku gravitasi maka suhu menggerakkan aliran.",
+    "t": 255.4
+   },
+   {
+    "n": 41,
+    "q": "What is recurrence CFD? Flow-based versus transport-based.",
+    "say": "Many flows show recurring patterns. Flow-based rCFD stitches recorded flow sequences together into an artificial long flow. Transport-based rCFD replaces convection by recorded cell-to-cell shifts and diffusion by face swaps. My thesis uses transport-based rCFD.",
+    "inti": "Flow-based: sambung urutan aliran. Transport-based: konveksi adalah pergeseran antar-sel, difusi adalah face swap.",
+    "t": 287.4
+   },
+   {
+    "n": 42,
+    "q": "What are the three bold failures of rCFD and their corrections?",
+    "say": "First, mass imbalance: locally the shifts do not conserve species mass, but globally we know the balance, so we correct the local fields by mass-acting face swaps. Second, unphysical diffusion: physical diffusion depends on local turbulence, so the face swaps should follow the local sub-grid viscosity. Third, insufficient recurrence prominence: in large domains frames are stitched where the flow is not similar, which is addressed by local recurrence. My correction belongs to the second family: it fights the unphysical diffusion of the replay.",
+    "inti": "1 neraca massa maka face swap koreksi. 2 difusi tak fisik maka face swap ikut turbulensi lokal. 3 prominence kurang maka rekurensi lokal. Tesis saya adalah kegagalan nomor 2.",
+    "t": 333.0
+   },
+   {
+    "n": 43,
+    "q": "What is a recurrence matrix? Is your flow recurrent?",
+    "say": "It compares every pair of recorded frames with a norm, here the sum of absolute differences in velocity magnitude. Dark means similar. My buoyant-jet flow is not recurrent: the matrix splits into two blocks at frame 315, when the warm inflow stops. So the replay re-transports the recorded sequence once and does not extrapolate in time.",
+    "inti": "Bandingkan semua pasangan frame. Aliran saya tidak berulang: dua blok, putus di frame 315.",
+    "t": 401.8
+   },
+   {
+    "n": 44,
+    "q": "How does your correction stay safe? (limiter)",
+    "say": "Reversed diffusion is ill-posed, so the risk is that the correction creates new extremes. The limiter bounds each exchange by what the two cells can give and receive without leaving the extremes of their neighbourhoods. It also stays conservative. No final field of the closed-configuration runs left the range of the data.",
+    "inti": "Anti-difusi berbahaya. Limiter membatasi tiap pertukaran agar tak melampaui ekstrem tetangga, tetap konservatif.",
+    "t": 450.3
+   },
+   {
+    "n": 45,
+    "q": "What is a digital twin, and where does rCFD fit?",
+    "say": "A digital twin is a model that runs alongside the real process and is updated with plant data. It must be fast enough to keep pace. A simple reactor model ignores internal heterogeneities, and full CFD is too slow and needs validation. rCFD sits in between: it keeps the spatial detail of CFD at a fraction of its cost. In my vessel case I nudged the replay towards rig measurements, which is a first step in this direction.",
+    "inti": "Digital twin adalah model berjalan bersama proses dan data pabrik. rCFD: detail CFD, biaya kecil.",
+    "t": 494.7
+   },
+   {
+    "n": 46,
+    "q": "CFD as ground truth for data-based simulations: what is the risk?",
+    "say": "From the ground truth of CFD simulations we can derive data-based simulations, such as rCFD or NeuralDEM, that run alongside the process. In pure forward mode, however, the errors will most probably accumulate. That is why the model should be fed with measurements. In my vessel case I nudged the replay towards the rig thermocouples, and the replay cost stayed almost the same.",
+    "inti": "CFD adalah kebenaran dasar untuk model berbasis data. Mode maju murni maka galat menumpuk maka perlu data ukur (nudging).",
+    "t": 549.0
+   },
+   {
+    "n": 47,
+    "q": "Pirker's own sample question: which statement about stand-alone CFD is correct?",
+    "say": "Stand-alone CFD simulations are always prone to errors, even with a verified solver, because of the cascade of uncertainties. They must be checked against measurements and analytic estimates. The course conclusion is: never trust stand-alone CFD simulations.",
+    "inti": "Jawaban: selalu rawan galat, walau solver terverifikasi. \"Never trust stand-alone CFD simulations!\"",
+    "t": 601.5
+   }
+  ]
+ }
+]
