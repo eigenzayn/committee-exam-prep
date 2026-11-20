@@ -1,0 +1,421 @@
+[
+ {
+  "title": "Hoedt: dasar neural network",
+  "file": "audio/jawaban1.mp3",
+  "duration": 821.7,
+  "cards": [
+   {
+    "n": "A1",
+    "q": "What is a neural network, and what is a single neuron?",
+    "say": "A neuron is a very simple unit. It takes the activations that come into it, multiplies each one by a weight, adds them up together with a bias, and then passes this sum through an activation function. So first a weighted sum, then a non-linearity. A neural network is many of these neurons connected to each other, where the output of one neuron becomes the input of others. All the knowledge of the network sits in the weights.",
+    "inti": "Neuron adalah jumlah berbobot s, lalu fungsi aktivasi f dari s.",
+    "who": "S29 Hoedt · T1",
+    "t": 6.4
+   },
+   {
+    "n": "A2",
+    "q": "What is a layer, what happens in a layer, and why do we call it a \"network\"?",
+    "say": "A layer is a group of neurons that all look at the same input, which is the output of the layer below. In a layer two things happen. First a linear map, the weight matrix times the input plus a bias. Then the activation function is applied to every element. We call it a network because these layers are connected one after the other, so the whole model is a function inside a function inside a function. Each layer builds a new representation of the data from the representation of the layer before.",
+    "inti": "Layer adalah W a tambah b lalu f. Network adalah fungsi bersarang (nested).",
+    "who": "S29 · T1 · S27",
+    "t": 54.2
+   },
+   {
+    "n": "A3",
+    "q": "Why do we need a non-linear activation? Can a DNN solve non-linear problems? Can the activation be linear?",
+    "say": "If we use no activation, or a linear one, stacking layers does not help, because a product of matrices is just another matrix. The deep network would still be a linear model. The classic example is XOR: no line can separate those four points, and you can see it directly because the linear equations contradict each other. With one hidden layer and a non-linearity like ReLU, the hidden layer maps the points into a new space where a line can separate them. So yes, a DNN can solve non-linear problems, but only because of the non-linear activation. A linear activation is fine in the output layer for regression, but not in the hidden layers.",
+    "inti": "Linear dan linear adalah linear. Non-linearitas yang membuat kedalaman berguna (contoh XOR).",
+    "who": "S29 · T1 · S21",
+    "t": 107.7
+   },
+   {
+    "n": "A4",
+    "q": "Which activation functions do you know? Properties? Which one is from Linz?",
+    "say": "I know the sigmoid, tanh, ReLU, leaky ReLU, ELU and SELU. The sigmoid squashes everything into zero to one and its derivative is at most a quarter, which makes deep sigmoid networks slow to learn. Tanh is centred at zero and looks like the identity near zero. ReLU is cheap and its derivative is one for positive inputs, so gradients pass through well, but it has no upper bound and can be zero for negative inputs. ELU and SELU come from Linz. ELU pushes the mean activation towards zero, and SELU is scaled so that a network keeps zero mean and unit variance by itself, which is self-normalization.",
+    "inti": "Sigmoid maks turunan 0,25. ReLU turunan 0 atau 1. SELU adalah Linz, self-normalizing.",
+    "who": "T1 · S19 · S30 · S27",
+    "t": 178.3
+   },
+   {
+    "n": "A5",
+    "q": "Binary classification 0/1: what is the output, why sigmoid? Could we use a step function, also in backprop?",
+    "say": "For a 0/1 problem we want the output to be the probability of class one, so the sigmoid fits well because its output is between zero and one. We cannot train a step function with backprop, because its derivative is zero everywhere except at zero, where it does not exist. Then every delta is zero and the weights never change. The sigmoid is a smooth version of the step, so it has a useful gradient. Together with binary cross-entropy the error at the output is just the prediction minus the label.",
+    "inti": "Step: turunan 0, tidak ada gradien. Sigmoid adalah step yang halus, keluarannya probabilitas.",
+    "who": "T2",
+    "t": 247.4
+   },
+   {
+    "n": "A6",
+    "q": "Why do we use deep neural networks instead of simpler models?",
+    "say": "There are three reasons. First, representation: by the universal approximation theorem, a network with one hidden layer can already approximate any continuous function on a compact set as closely as we want. But the theorem does not say how many hidden units we need. Second, the deep network is a composition of simple functions, so each layer can reuse what the layer below has computed. Third, learnability: because it is a composition, backpropagation gives us all the gradients in one backward pass, at a cost linear in the number of weights. So we can actually train these large models with gradient descent on a lot of data, which simpler models with hand-made features cannot use as well.",
+    "inti": "Tiga alasan: representasi (UAT), fungsi bersarang yang bisa dipakai ulang, dan bisa dilatih (backprop O of W).",
+    "who": "S29 Hoedt · S23 · S31",
+    "t": 310.1
+   },
+   {
+    "n": "A7",
+    "q": "How do we train a neural network?",
+    "say": "Training is an optimization problem. We choose a loss that measures how wrong one prediction is, and we average it over the training data. That is the empirical risk. Then we start from random weights, take a mini-batch, do a forward pass to get predictions, compute the loss, use backprop to get the gradient of the loss with respect to every weight, and take a small step against the gradient. We repeat this over many epochs and watch the loss on a validation set so that we know when to stop.",
+    "inti": "Loss maka empirical risk maka forward maka backprop maka langkah gradien maka ulang per mini-batch.",
+    "who": "T1 · S21 · S11",
+    "t": 380.3
+   },
+   {
+    "n": "A8",
+    "q": "Derive backpropagation. Define the delta error and give its recursive formula.",
+    "say": "Backprop is just the chain rule, organised so that we reuse work. A weight from neuron j to neuron i only affects the loss through the pre-activation of i. So its gradient is the derivative of the loss with respect to that pre-activation, which we call the delta of i, times the activation of j. At the output the delta is the derivative of the loss times the derivative of the activation. For a hidden neuron we collect the deltas of all neurons it feeds into, weighted by the connecting weights, and multiply by the derivative of its own activation. So we first do a forward pass and store all activations, then compute the deltas from the top layer down, and every weight gradient is delta times activation.",
+    "inti": "turunan L terhadap w i j sama dengan delta i kali a j. delta j sama dengan f aksen kali jumlah delta i kali w i j. Dari atas ke bawah.",
+    "who": "S29 Hoedt · S2, S7, S19, S25, S30 · T3",
+    "t": 430.8
+   },
+   {
+    "n": "A9",
+    "q": "Which output activation and loss for regression and classification? What is the delta at the output with softmax + cross-entropy?",
+    "say": "For regression I use a linear output with the squared loss. For two classes a sigmoid output with binary cross-entropy, and for many classes a softmax with categorical cross-entropy. These pairs are chosen on purpose: in all three cases the delta at the output is simply the prediction minus the target. For softmax and cross-entropy you can show it in two lines, because the derivative of the softmax brings a factor that cancels the one over a from the logarithm.",
+    "inti": "Pasangan yang \"cocok\" selalu memberi delta sama dengan a dikurangi y.",
+    "who": "S19 Hochreiter · T2",
+    "t": 505.5
+   },
+   {
+    "n": "A10",
+    "q": "Explain gradient descent. Why mini-batches? SGD?",
+    "say": "Gradient descent looks at the slope of the loss at the current weights and takes a small step downhill, against the gradient. Computing the exact gradient needs the whole training set for every single step, which is too slow. With mini-batches we estimate the gradient from a small random batch, which is correct on average. We get many more updates for the same compute, and the noise in the estimate even helps a bit as regularization. One epoch means every training sample has been used once.",
+    "inti": "Mini-batch adalah taksiran gradien yang tak bias, murah, sedikit noise yang membantu.",
+    "who": "S21 Schlüter · S25 Klambauer · T1 · T2",
+    "t": 561.2
+   },
+   {
+    "n": "A11",
+    "q": "How does the learning rate influence learning? Why small, why large? Learning rate vs batch size?",
+    "say": "The learning rate is the size of each step. If it is too small, training is stable but painfully slow and can get stuck on flat regions. If it is too large, we overshoot the minimum, the loss oscillates, and it can even blow up. You can see it on a simple quadratic: each step multiplies the weight by one minus learning rate times curvature, and if that factor is larger than one in absolute value, it diverges. Batch size and learning rate are linked through the noise: a bigger batch gives a cleaner gradient, so we can usually afford a larger step.",
+    "inti": "Kecil adalah lambat. Besar adalah berosilasi atau meledak. Batch besar maka gradien lebih bersih maka eta bisa lebih besar.",
+    "who": "T2",
+    "t": 613.9
+   },
+   {
+    "n": "A12",
+    "q": "What is Adam? Stochastic gradient descent vs Adam.",
+    "say": "Plain SGD uses the same learning rate for every weight and follows the noisy gradient directly. Adam keeps two running averages for each weight: the average gradient, which is momentum and smooths the direction, and the average squared gradient, which measures how large the gradients usually are. The step is the first divided by the square root of the second. So weights with big, noisy gradients take smaller steps, and weights with small gradients take larger steps. Adam is less sensitive to the scale of the gradients and usually converges faster, while well-tuned SGD with momentum sometimes generalizes a bit better.",
+    "inti": "Adam adalah momentum (m) dan skala per bobot (akar v) dan koreksi bias.",
+    "who": "T1 · T2 · S19 · S30",
+    "t": 679.4
+   },
+   {
+    "n": "A13",
+    "q": "Which initialization techniques do you know? Why this variance, what is the theory?",
+    "say": "First, the weights must be random, because with constant weights all neurons in a layer compute the same thing and get the same gradient, so they never become different. Second, the scale matters. If we look at one neuron, its pre-activation is a sum over J inputs, so its variance is J times the weight variance times the input variance. Through many layers this factor is multiplied again and again, so the signal either dies out or explodes. The fix is to choose the weight variance so that the factor is one: one over the fan-in, which is LeCun initialization. For the backward pass you get one over the fan-out, and Glorot uses the average of both. ReLU sets half of the inputs to zero, so it halves the variance, and He initialization compensates with two over the fan-in.",
+    "inti": "Acak untuk memecah simetri. J kali varians bobot sama dengan satu: LeCun satu per J, Glorot dua per J tambah I, He dua per J (ReLU memotong setengah).",
+    "who": "S30 Hochreiter · bab D1 ditulis Hoedt",
+    "t": 741.8
+   }
+  ]
+ },
+ {
+  "title": "Klambauer: ERM, risk, loss, metode training",
+  "file": "audio/jawaban2.mp3",
+  "duration": 382.1,
+  "cards": [
+   {
+    "n": "B1",
+    "q": "Write down a supervised dataset, a model, a loss, and the empirical risk in general.",
+    "say": "I start with the data: pairs of inputs and labels, which we assume are drawn independently from the same unknown distribution. Then a model, a function g of x with parameters w, chosen from some hypothesis set. This can be a neural network, but also a linear model or a random forest. Then a loss that says how far one prediction is from its label. The empirical risk is the average loss over the training data, and empirical risk minimization means we pick the parameters that make this average as small as possible. Note that ERM only says what we minimize, not how. For a network we use gradient descent, for a linear model we have a closed form.",
+    "inti": "Data x n, y n, model g dari x dan w, loss L, R emp adalah rata-rata loss, ERM adalah argmin. Tulis yang paling sederhana dulu (saran S25).",
+    "who": "S7, S14, S25, S26 Klambauer · S9, S11 · T3",
+    "t": 7.5
+   },
+   {
+    "n": "B2",
+    "q": "What is the generalization error (risk)? What happens when N goes to infinity?",
+    "say": "The generalization error is the expected loss on new data from the same distribution, an integral of the loss weighted by the data density. We can never compute it, because we do not know that density. For a fixed model the empirical risk is a sample average of this expectation, so by the law of large numbers it converges to the true risk when N goes to infinity. The catch is that we chose the weights using the training data, so the training error is too optimistic. For an honest estimate we use a held-out test set or cross-validation.",
+    "inti": "R gen adalah harapan loss pada data baru. N menuju tak hingga: R emp mendekati R gen (hukum bilangan besar), untuk w tetap.",
+    "who": "S9 · S31 Küng · T3 (``general risk'')",
+    "t": 84.5
+   },
+   {
+    "n": "B3",
+    "q": "Explain ERM on a simple model, for example linear regression.",
+    "say": "For linear regression the model is w transpose x and the loss is the squared error. The empirical risk is then the sum of squared residuals. Its gradient is X transpose times the residual vector. Because the problem is convex, I can set the gradient to zero and get the normal equations, so the weights are the pseudo-inverse of X times y. I could also just run gradient descent with the same gradient. And there is a nice interpretation: if the noise on the labels is Gaussian, least squares is exactly maximum likelihood.",
+    "inti": "gradien S sama dengan nol, maka w topi sama dengan pseudo-invers X kali y. Kuadrat terkecil adalah MLE di bawah noise Gauss.",
+    "who": "S14 Klambauer · S12",
+    "t": 146.0
+   },
+   {
+    "n": "B4",
+    "q": "Loss functions and their properties. Do they all need to be differentiable?",
+    "say": "A loss measures the cost of one prediction. The squared loss is natural for regression and comes from Gaussian noise. Cross-entropy is the negative log-likelihood for classification. The zero-one loss simply counts mistakes, and it is what we really care about in classification, but it is not differentiable and its gradient is zero almost everywhere. So it is a fine loss for ERM in theory and for evaluation, but we cannot train a network on it with gradient descent. That is why we train with cross-entropy instead and report accuracy with the zero-one loss.",
+    "inti": "Tidak semua loss harus terdiferensialkan (0-1 loss). Untuk gradient descent perlu loss yang halus.",
+    "who": "S26 Klambauer",
+    "t": 205.9
+   },
+   {
+    "n": "B5",
+    "q": "Are there other training methods besides gradient descent? Which optimizers do you know?",
+    "say": "Besides plain gradient descent there are several families. Momentum adds a memory of past gradients. Adaptive methods like AdaGrad, RMSProp and Adam give each weight its own step size. Then there are methods that use the gradient differently: RProp only uses the sign of the gradient, and Quickprop fits a parabola through the last two gradients and jumps to its minimum, which is a cheap Newton step. Finally, true second-order methods use the curvature, the Hessian, but they are expensive for large networks.",
+    "inti": "Momentum · adaptif (AdaGrad, RMSProp, Adam) · RProp (tanda) · Quickprop (parabola) · orde dua (Hessian).",
+    "who": "S7 Klambauer · S19, S30 Hochreiter",
+    "t": 266.6
+   },
+   {
+    "n": "B6",
+    "q": "Overfitting, model complexity and cross-validation.",
+    "say": "A more complex model can fit the training data better and better, but at some point it starts to fit the noise. Then the training error still goes down while the test error goes up, and that is overfitting. To choose the complexity we need an estimate of the test error that does not use the training data. With few data we use cross-validation: split the data into folds, train on all folds but one, test on the left-out fold, and average over all folds.",
+    "inti": "Kompleksitas naik: train error turun terus, test error turun lalu naik. CV adalah rata-rata error di fold yang ditinggalkan.",
+    "who": "S9 · S12 (DLNN1 bab 5)",
+    "t": 327.7
+   }
+  ]
+ },
+ {
+  "title": "Hochreiter: vanishing gradient, struktur W, regularisasi, SVM, RL",
+  "file": "audio/jawaban3.mp3",
+  "duration": 644.1,
+  "cards": [
+   {
+    "n": "C1",
+    "q": "Explain vanishing gradients. What can we do to mitigate them?",
+    "say": "Backprop multiplies the delta by the weight matrix and by the derivative of the activation in every layer. If this factor is smaller than one, the gradient shrinks exponentially as we go down, so the early layers hardly learn. That is the vanishing gradient, which Sepp Hochreiter described in 1991. With the sigmoid it is almost guaranteed, because its derivative is at most a quarter. If the factor is larger than one we get exploding gradients. To fix it we use activations like ReLU or SELU whose derivative can be one, initialization that keeps the variance at one, normalization layers, residual connections whose Jacobian is close to the identity, and in recurrent networks the LSTM with its constant error carousel.",
+    "inti": "Delta dikali W kali turunan aktivasi tiap layer maka eksponensial. Obat: ReLU atau SELU, init, normalisasi, residual, LSTM.",
+    "who": "S30 Hochreiter · S12",
+    "t": 10.0
+   },
+   {
+    "n": "C2",
+    "q": "How is the spectral norm defined? Which structure do we want for W?",
+    "say": "The spectral norm of a matrix is its largest singular value, so it tells us the largest factor by which the matrix can stretch a vector. In backprop the delta is multiplied by W in every layer, so if the spectral norm is far from one, the gradient explodes or vanishes. Ideally we want all singular values close to one, so the matrix is close to orthogonal and preserves norms. That is the idea behind orthogonal or identity recurrent weights, the constant error carousel in LSTM, and residual networks.",
+    "inti": "norma spektral W adalah nilai singular terbesar. Ingin dekat 1, idealnya ortogonal (W transpose W sama dengan identitas).",
+    "who": "S30 Hochreiter",
+    "t": 87.6
+   },
+   {
+    "n": "C3",
+    "q": "Which regularization techniques do you know? (Weight decay, dropout)",
+    "say": "Regularization limits the effective complexity so that the network learns patterns that hold for many examples, not noise. The classic one is weight decay: we add the squared norm of the weights to the loss, and in every step the weights shrink by a constant factor, so small weights are preferred. Dropout randomly switches off neurons during training, which is like training an ensemble of sub-networks. Because only a fraction p of the inputs arrives, we have to rescale, either the weights at test time or the activations by one over p during training. Others are early stopping, data augmentation, noise on weights or units, weight sharing as in CNNs, pruning, and Flat Minimum Search, which looks for flat minima.",
+    "inti": "Weight decay: w menjadi satu dikurangi eta lambda, kali w. Dropout: ekspektasi turun ke p, skala ulang.",
+    "who": "S19, S30 Hochreiter",
+    "t": 149.2
+   },
+   {
+    "n": "C4",
+    "q": "Which normalizations do you know, and which one is popular now?",
+    "say": "Normalization keeps the distribution of activations stable during training, usually at zero mean and unit variance, because the size of every weight update depends on the activations. Batch norm standardizes each neuron over the mini-batch and then learns a scale and a shift. Layer norm standardizes over all neurons of one layer for each sample, so it does not depend on the batch and works with batch size one, which is why transformers use it. Weight normalization works on the weights, and self-normalizing networks with SELU reach zero mean and unit variance on their own, as a stable fixed point. Today the popular one in large language models is RMSNorm, which is layer norm without subtracting the mean: it only divides by the root mean square and multiplies by a learned scale.",
+    "inti": "BN: per neuron lintas batch. LN: per sampel lintas neuron. SNN: SELU, titik tetap (0,1). RMSNorm: LN tanpa pengurangan mean.",
+    "who": "S30 Hochreiter",
+    "t": 219.4
+   },
+   {
+    "n": "C5",
+    "q": "What is the difference between AdamW and Adam with weight decay as a separate regularization term?",
+    "say": "For plain SGD, adding an L2 penalty to the loss and doing weight decay are the same thing. For Adam they are not. If we put the L2 term into the loss, it becomes part of the gradient and gets divided by Adam's running estimate of the gradient size, so weights with large gradients are regularized less. AdamW decouples the two: Adam only sees the gradient of the data loss, and the weight decay is applied directly to the weights in a separate step, so all weights shrink at the same rate.",
+    "inti": "SGD: L2 adalah weight decay. Adam: tidak sama, karena dibagi akar v. AdamW memisahkan decay dari langkah Adam.",
+    "who": "S30 Hochreiter",
+    "t": 301.9
+   },
+   {
+    "n": "C6",
+    "q": "Write down the primal SVM. What do we optimize? Where does the \"1\" come from, could it be another value? What is the canonical form?",
+    "say": "The SVM looks for the separating hyperplane with the largest margin. Because we can scale w and b together without changing the hyperplane, we fix the scale so that the closest points satisfy w transpose x plus b equal to plus or minus one. That is the canonical form and the source of the \"1\". Then the margin is one over the norm of w, so maximizing the margin means minimizing one half the squared norm of w, subject to y i times w transpose x i plus b being at least one for every point. Any other positive constant would only rescale w and b and give the same classifier. It is a convex quadratic program with a unique solution. With Lagrange multipliers we get the dual, where the data only appear as dot products, so we can replace them by a kernel.",
+    "inti": "Kanonik: titik terdekat nilai mutlak w transpose x tambah b sama dengan satu. Margin satu per norma w. Primal: minimumkan setengah norma w kuadrat dengan syarat y i kali w transpose x i tambah b, paling kecil satu. Konstanta lain hanya menskala.",
+    "who": "S30 Hochreiter · S6 · S26 Klambauer",
+    "t": 362.9
+   },
+   {
+    "n": "C7",
+    "q": "LSTM: how does it solve the vanishing gradient? (constant error carousel)",
+    "say": "In a plain recurrent network the error is multiplied by the recurrent weight and the activation derivative at every time step, so it vanishes over long time spans. The LSTM keeps a cell state that is updated additively, with a self-connection of exactly one and no squashing. So the derivative of the cell state with respect to the previous cell state is the identity, and the error flows back unchanged. That is the constant error carousel. Around it, an input gate decides what to write and an output gate decides what to read, so the memory is protected from irrelevant inputs.",
+    "inti": "c t sama dengan c t minus satu, tambah i kali z maka turunan c t terhadap c t minus satu sama dengan identitas maka error tidak mengecil (CEC).",
+    "who": "S30 · Hochreiter (penemu LSTM)",
+    "t": 455.8
+   },
+   {
+    "n": "C8",
+    "q": "Reinforcement learning: derive the REINFORCE loss.",
+    "say": "We want to maximize the expected return of the policy. The policy gradient theorem tells us the gradient without differentiating the state distribution. We write the sums as expectations, multiply and divide by the policy so that we can sample the action, and replace the action value by the return we actually observed. Using the gradient of the log, the update is: return times the gradient of the log probability of the action we took. As a loss, that is minus the return times the log probability. Intuitively, actions that led to high return become more likely. It is unbiased but has high variance, which is why a baseline is often subtracted.",
+    "inti": "gradien J sebanding dengan harapan G t kali gradien log pi. Loss sama dengan minus G t kali log pi.",
+    "who": "S2 Hochreiter",
+    "t": 521.3
+   },
+   {
+    "n": "C9",
+    "q": "How can you do feature selection?",
+    "say": "There are two families. Filter methods score each feature on its own, for example by its correlation or dependency with the label, and keep the best ones, without training the final model. They are fast but can miss features that are only useful together. Wrapper methods train the actual model on different subsets of features and keep the subset that gives the best validation performance. They are more accurate but much more expensive. We do feature selection because with many features and few samples we overfit, and fewer features also make the model cheaper and easier to interpret.",
+    "inti": "Filter (skor per fitur, tanpa model) dibanding wrapper (pakai model untuk menilai subset).",
+    "who": "S19 Hochreiter",
+    "t": 586.1
+   }
+  ]
+ },
+ {
+  "title": "Schlüter: urutan, CNN, loss surface",
+  "file": "audio/jawaban4.mp3",
+  "duration": 295.9,
+  "cards": [
+   {
+    "n": "D1",
+    "q": "What is the loss surface? What does it look like for a deep network?",
+    "say": "The loss surface is the empirical risk seen as a function of all the weights, so it is a surface over a space with millions of dimensions. Gradient descent walks downhill on it. For linear or logistic regression the surface is convex, so there is one global minimum. For a deep network it is non-convex, with many local minima and flat regions. The surprising finding is that for large networks most local minima found by SGD are about equally good on the test set, and for linear networks every local minimum is even global. Flat regions are a problem for speed, which is why momentum and adaptive optimizers help.",
+    "inti": "Loss surface adalah R emp dari w di ruang bobot. Linear: konveks. Deep: non-konveks, tapi minimum lokal yang ditemukan SGD hampir setara.",
+    "who": "S27 Schlüter",
+    "t": 7.9
+   },
+   {
+    "n": "D2",
+    "q": "Your model predicts per time frame. What if you had to predict one label for the entire sequence?",
+    "say": "I would keep the network that computes features for every frame and then pool over time. The simplest choice is global average pooling: I take the mean of the frame features, which gives one vector for the whole sequence, and put a classifier on top. It has no parameters, it works for any sequence length, and in the backward pass every frame receives the same share of the gradient. If only a short event matters, max pooling over time can be better. With a recurrent network I could also use the last hidden state, or attention, which learns how much each frame should count.",
+    "inti": "Per-frame maka satu label: global average pooling h rata-rata, yaitu rata-rata h di semua waktu, tanpa parameter, panjang bebas. Alternatif: max, state terakhir, attention.",
+    "who": "S27 Schlüter",
+    "t": 76.9
+   },
+   {
+    "n": "D3",
+    "q": "How does the training work for a bidirectional RNN, which uses information from the future?",
+    "say": "A bidirectional RNN is simply two recurrent networks. One reads the sequence from left to right, the other from right to left, and at each time step we concatenate both hidden states, so the prediction at time t has seen both the past and the future. Training is normal backpropagation through time: we unfold both networks over the whole sequence, compute the loss at the outputs, and send the error back along each chain, in the forward network towards the beginning and in the backward network towards the end. The gradients of the shared weights are summed over all time steps. The price is that we need the complete sequence first, so it cannot be used online.",
+    "inti": "Dua RNN (maju dan mundur), state digabung. Latih dengan BPTT di kedua rantai. Butuh seluruh sekuens.",
+    "who": "S21 Schlüter",
+    "t": 146.8
+   },
+   {
+    "n": "D4",
+    "q": "CNN: what is the receptive field? How do you increase it? What does pooling do?",
+    "say": "The receptive field of a unit is the part of the input image that can influence it. In the first layer it is just the kernel size. Every further layer adds the kernel size minus one, multiplied by the product of all strides before it. So there are four ways to make it larger: more layers, larger kernels, strides or pooling, which multiply the growth of all later layers, and dilated convolutions, which spread the kernel out without more weights. Pooling, like max pooling over two by two regions, keeps the strongest response in each region. It reduces the size of the feature maps, makes the network less sensitive to small shifts, and increases the receptive field of the following layers.",
+    "inti": "v sama dengan satu tambah jumlah R minus satu kali hasil kali stride. Perbesar: tambah layer, kernel besar, stride atau pooling, dilasi. Pooling: ambil maks, buang posisi persis, peta lebih kecil.",
+    "who": "T2 (komite dengan Schlüter)",
+    "t": 216.2
+   }
+  ]
+ },
+ {
+  "title": "Defense: pertanyaan tentang tesis Anda",
+  "file": "audio/jawaban5.mp3",
+  "duration": 1170.8,
+  "cards": [
+   {
+    "n": "E1",
+    "q": "What problem was solved? Why should I care about it?",
+    "say": "Many thermal processes, like a hot-water storage tank, a steel ladle or a chemical reactor, have a flow that settles in seconds but a temperature field that develops over minutes or hours. Conventional CFD has to keep the small time step of the flow for the whole process, so it is far too slow when you need answers quickly, for example in a digital twin. Recurrence CFD records the motion once and replays it, which is two to three orders of magnitude faster. But it was developed for passive scalars. My question was: does it still work when the temperature itself drives the flow, as in a buoyant jet? And if not, what exactly goes wrong and what can we fix?",
+    "inti": "Aliran cepat, suhu lambat maka CFD terlalu lambat maka rCFD cepat tapi untuk skalar pasif maka saya uji untuk suhu yang menggerakkan aliran.",
+    "who": "S14 Küng · S25 Küng · S18 Mara",
+    "t": 5.8
+   },
+   {
+    "n": "E2",
+    "q": "Why and how does a data-based method solve this problem? Why does it have the capacity to do so?",
+    "say": "The key observation is that, once the velocity is known, the energy equation is linear in the temperature. So I can store how the solver moved fluid between cells at every second as a sparse matrix, and later apply these matrices to any temperature field. One replay step is then just a sparse matrix-vector product, instead of solving the momentum and pressure equations again. The columns of each matrix sum to one, so heat is conserved by construction. In computer-science terms we trade memory for computation: the database is 2.4 gigabytes, but each replay takes about two minutes instead of nine and a half hours. The capacity comes from the real solver's transport, not from a fitted model. The limit is equally clear: the replay can only reproduce motion that is in the recording.",
+    "inti": "u tetap maka persamaan energi linear dalam T maka simpan peta M f maka replay adalah sparse mat-vec. Tukar memori dengan waktu hitung.",
+    "who": "S14 Küng",
+    "t": 73.5
+   },
+   {
+    "n": "E3",
+    "q": "What is your data? (data, batches, training)",
+    "say": "My data come from one reference CFD simulation per boundary condition. While it runs, the solver records, every second, which fraction of each cell moves to each neighbouring cell. That gives 600 sparse transport maps per database, about 2.4 gigabytes, on a mesh of about 85 thousand cells. There is no training in the usual sense, so there are no batches or epochs. The replay simply applies the recorded maps in order. What I did tune were three parameters, the mixing strength, the wall-loss multiplier and the correction strength, and I chose them by parameter studies against the reference simulation.",
+    "inti": "600 frame kali 1 s, 85625 sel, 2,4 GiB. Tidak ada training atau batch. Yang dituning: f s d, multiplier dinding, s.",
+    "who": "T1 Hoedt (ketua) · S20",
+    "t": 155.0
+   },
+   {
+    "n": "E4",
+    "q": "Why supervised, why unsupervised? Where is the machine learning in your thesis?",
+    "say": "Strictly speaking I did not train a neural network, so it is neither supervised nor unsupervised learning in the classical sense. The method is data-based: it stores the transport of a simulation and reuses it, and choosing the next stored state is a nearest-neighbour search, the method of analogues. The closest thing to supervised learning is how I chose the correction strength: I compared the replay with the reference simulation, which plays the role of ground truth. The natural next step is to make this a real learning problem: a small network that predicts the local correction strength from the replayed field. It would act inside the limiter, so conservation and the bounds still hold, and with a physics-based loss it could even use sparse sensor data.",
+    "inti": "Bukan supervised atau unsupervised: berbasis data (memori dan nearest neighbour). Pemilihan s terhadap referensi kira-kira supervised. Lanjutan: jaringan kecil memprediksi s di dalam limiter.",
+    "who": "T1 Hoedt (ketua) · S15",
+    "t": 226.2
+   },
+   {
+    "n": "E5",
+    "q": "What did you create that did not exist before?",
+    "say": "Three things are new. First, a diagnosis: I showed that the standard replay cannot get both the heat content and the height of the warm layer right with one mixing parameter, and why. The outlet sits just below the thermocline, so numerical diffusion lets too much heat leave. Second, a fix: I brought a bounded anti-diffusive correction from flux-corrected transport into the replay, weighted towards the vertical. It restores the thermocline from 15.7 millimetres to between 5.3 and 4.0, against 5.0 in the reference, and it never leaves the range of the data. Third, a limit: when the lid is cooled, the cooled fluid sinks and creates motion that is not in the recording, and no local correction can replace missing motion. So a database belongs to a flow regime, not just to a case.",
+    "inti": "Diagnosis (trade-off dan outlet) · koreksi terbatas (15,7 maka 5,3 sampai 4,0 mm, ref 5,0) · batas (gerak yang hilang) · database milik rezim.",
+    "who": "S18 Mara · S25",
+    "t": 305.6
+   },
+   {
+    "n": "E6",
+    "q": "Why did you choose this method, and not another one, e.g. a neural network or a reduced-order model?",
+    "say": "I chose recurrence CFD because my problem is a thin, moving thermocline. Reduced-order models with a few global modes struggle with such sharp, moving gradients, and they need closure models for whatever the modes do not capture. rCFD keeps the full mesh resolution and uses the transport of the real solver, so it conserves heat by construction. A neural network that predicts the whole field would need many paired states and gives no guarantee of conservation or boundedness. For the correction I chose a flux-corrected-transport limiter because simply reversing diffusion is ill-posed and blows up. The limiter makes it safe.",
+    "inti": "ROM: susah untuk gradien tipis dan perlu closure. NN: butuh banyak data, tanpa jaminan konservasi. rCFD: resolusi penuh, konservatif. Limiter: anti-difusi aman.",
+    "who": "S25 Ulrich · S18 Mara (``why this network type'')",
+    "t": 390.0
+   },
+   {
+    "n": "E7",
+    "q": "Why did your extended replay work better than the standard replay?",
+    "say": "The standard replay has only one tool, face exchange, and that tool can only smooth. Once the thermocline is smeared, more or less smoothing cannot bring it back. The extended replay adds the opposite operation, a bounded transfer of heat up the gradient, but only across the thermocline, in the vertical direction. That is the key point: the direction matters more than the strength. Applied in all directions, the correction makes grid-scale ripples. Applied across the front, it sharpens it cleanly. And because the outlet sits just below the thermocline, a sharper front also means the right temperature at the outlet and therefore the right heat loss. So it fixes both the layering and the energy budget.",
+    "inti": "Face exchange hanya menghaluskan. Koreksi adalah naik gradien, arah vertikal. Arah > kekuatan. Front tajam maka suhu outlet benar maka energi benar.",
+    "who": "analog T2 (``why did mLSTM work better than attention'')",
+    "t": 467.3
+   },
+   {
+    "n": "E8",
+    "q": "How did your main parameters affect the results?",
+    "say": "Two parameters matter most. The mixing strength of the standard replay controls a trade-off: little mixing gives the best mean temperature, while a value around 0.5 gives the best height of the warm layer. You cannot have both, because more mixing pushes warm fluid down to the outlet. More mixing also costs more time. The correction strength has a narrow working range, between 0.4 and 0.5 in the adiabatic case. Below it, the front is not sharp enough; above it, the strict bound of the limiter no longer holds. About the length of the data: the database covers 600 seconds and the flow is not recurrent, so the replay cannot go beyond those 600 seconds.",
+    "inti": "f s d: trade-off panas dibanding ketinggian (tak ada nilai terbaik tunggal). s: rentang kerja 0,40 sampai 0,50. Data 600 s, tak bisa diperpanjang.",
+    "who": "analog T2 (``how did the sequence length affect the results'')",
+    "t": 544.6
+   },
+   {
+    "n": "E9",
+    "q": "Theory: explain the face exchange and why it cannot restore a gradient.",
+    "say": "Face exchange is how the replay adds mixing. At every internal face it moves a fraction of the temperature difference from the warmer cell to the colder one. If you write it out for two equal cells, the new difference is one minus f s d times the old difference, and the sum stays the same. So it is conservative, but the factor is always below one. It can only reduce differences. That is why no choice of the mixing strength can rebuild a thermocline that has been smeared: you need an operation that goes the other way.",
+    "inti": "Selisih baru sama dengan satu dikurangi f s d, kali selisih lama maka hanya bisa mengecil. Konservatif.",
+    "who": "S19 (``look at your theory part'') · S7 (rumus rinci) · S6 Hochreiter",
+    "t": 622.1
+   },
+   {
+    "n": "E10",
+    "q": "Theory: why is anti-diffusion dangerous, and how does your limiter make it safe? Is it conservative?",
+    "say": "Reversing diffusion means running the heat equation backwards, which is ill-posed: every Fourier mode grows, and the shortest ripples grow fastest. On a model front, even a disturbance of one millikelvin leaves the data range within about twenty steps. So I borrowed the idea of flux-corrected transport. For each cell I take the minimum and maximum of its neighbourhood, and across each face I move heat from the cold to the warm side, but only a fraction s of what both cells can still take or give without crossing those bounds. Each face moves the same amount out of one cell and into the other, so energy is conserved exactly, and no new extremes appear. With the vertical weighting the bound guarantees this for s up to one half.",
+    "inti": "Anti-difusi: mode e pangkat D k kuadrat t, riak terhalus meledak. Limiter: delta q sama dengan s kali minimum Q plus dan Q minus, tak ada ekstrem baru, konservatif, aman sampai s paling besar setengah (vertikal).",
+    "who": "S19 · S7 · S6 Hochreiter",
+    "t": 680.7
+   },
+   {
+    "n": "E11",
+    "q": "Is your flow recurrent? Why can you call it rCFD then?",
+    "say": "No, my flow is not recurrent. The recurrence matrix splits into two blocks at second 315, when the warm inflow stops, and the recurrence prominence is about half of the recommended minimum. So I do not jump between similar frames. The replay goes through the 600 recorded frames in order. It is still recurrence CFD in the data-based sense: I replay stored transport operators instead of solving the flow again. The saving comes from skipping the momentum and pressure equations, not from extending the recording in time.",
+    "inti": "Tidak rekuren: dua blok di frame 315, prominence 0,028 (< 0,05). Replay berurutan, tetap rCFD berbasis data.",
+    "who": "Pirker/Zoitl · S6 (``explain everything you used'')",
+    "t": 765.9
+   },
+   {
+    "n": "E12",
+    "q": "How much faster is it, and what does it cost?",
+    "say": "In the closed case the reference simulation needed 569 minutes and the extended replay about 1.9, so roughly 300 times faster. In the laboratory vessel it was about 800 to 1,250 times. The price is storage, 2.4 gigabytes for one database, and of course the one reference simulation needed to record it. So the method pays off when one recording is replayed many times, for example to compare operating conditions.",
+    "inti": "569 min maka 1,9 min kira-kira 300 kali . Vessel kira-kira 790 sampai 1250 kali . Biaya: 2,4 GiB dan satu simulasi rekaman.",
+    "who": "S25 · S11",
+    "t": 831.9
+   },
+   {
+    "n": "E13",
+    "q": "What are realistic applications? How would you use it in the real world?",
+    "say": "Anywhere a thermal process must be simulated quickly and often: stratified hot-water storage, a steel ladle, a chemical reactor. The most interesting use is a digital twin, a model that runs next to the real process and is corrected with plant data. In my laboratory vessel case I already nudged the replay towards the measured thermocouple temperatures, and the replay still took only about ten minutes. That is the direction: fast physics-based replay plus measurements.",
+    "inti": "Penyimpanan panas, ladle baja, reaktor, digital twin. Nudging ke sensor: tetap 10 menit.",
+    "who": "S25 Klambauer · S20 Mara",
+    "t": 896.1
+   },
+   {
+    "n": "E14",
+    "q": "What are the limitations? Are there issues with your data?",
+    "say": "I would name four. First, my reference is itself a simulation, so I show agreement with a simulation, not validation against an experiment. Second, I used one mesh and one fluid, whose thermal properties come from the solver's default for air, so the correction strengths I found belong to this case and are not general settings. Third, I chose the parameters with the reference available, so these are in-sample results, not predictions. And fourth, the fundamental one: the replay can never create motion that is not in the recording, such as the plume of a floor feed replayed with a lid-fed database.",
+    "inti": "Acuan adalah simulasi · satu mesh, satu fluida (Prandtl sekitar 42) · parameter dipilih dengan acuan (in-sample) · tidak bisa membuat gerak baru.",
+    "who": "S20 Mara · S31",
+    "t": 951.5
+   },
+   {
+    "n": "E15",
+    "q": "What would you do differently in hindsight? How could you extend the work?",
+    "say": "In hindsight I would plan the validation from the start: a second mesh and a comparison with measurements of a buoyant jet, so the working strengths are not tied to one grid. I would also record the flux without the reference temperature, only its kinematic part, so that it can be transferred to other cases. As extensions, two things excite me most. First, switching between databases according to the current temperature field, so that a cooled lid or a floor feed gets the right motion. Second, letting a small neural network predict the local correction strength from the replayed field, inside the limiter, so that it stays conservative and bounded.",
+    "inti": "Dari awal: mesh kedua dan eksperimen. Rekam fluks kinematik. Lanjutan: ganti database sesuai keadaan dan jaringan kecil untuk s di dalam limiter.",
+    "who": "S14 Küng · S18, S20 Mara · S31",
+    "t": 1018.0
+   },
+   {
+    "n": "E16",
+    "q": "Which work influenced your thesis the most? How does it connect to your studies?",
+    "say": "Two lines of work. The method itself comes from Lichtenegger and Pirker, especially their 2018 paper, which introduced the face exchange I analysed. The correction comes from a much older idea, flux-corrected transport by Boris and Book and the multidimensional limiter of Zalesak from 1979. From my studies, three courses meet here. Numerical methods in fluid mechanics, because the whole problem is numerical diffusion. Machine learning, because the method is data-based: it stores operators and finds the next one by a nearest-neighbour search, and I selected parameters against a reference much like hyperparameters on validation data. And the limiter works like a guardrail, a hard constraint that keeps the output inside the range of the data.",
+    "inti": "Pirker dan Lichtenegger 2018 (metode) dan Zalesak 1979 (limiter). Kuliah: metode numerik, ML (nearest neighbour, pemilihan parameter), constraint.",
+    "who": "S18 Mara · S15 J. Küng",
+    "t": 1087.1
+   }
+  ]
+ }
+]

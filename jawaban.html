@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam Answers Audio</title>
+<style>
+:root{--bg:#fbfaf7;--card:#fff;--ink:#1f2328;--muted:#667;--accent:#0b5cad;--soft:#eef4fb;--line:#dde3ea;--warm:#b03a2e}
+@media (prefers-color-scheme:dark){:root{--bg:#14171b;--card:#1c2026;--ink:#e6e8eb;--muted:#9aa3ad;--accent:#6aa9ec;--soft:#1f2a36;--line:#2c333b;--warm:#e2836f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Georgia,"Charis SIL",serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px 80px}
+h1{font-size:1.6rem;margin:.2em 0;color:var(--accent)}
+.sub{color:var(--muted);margin:0 0 1em}
+.pdf{display:inline-block;margin:.4em 0 1.2em;padding:.5em .9em;border:1px solid var(--accent);border-radius:6px;color:var(--accent);text-decoration:none;font-family:system-ui,sans-serif;font-size:.95rem}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 14px 6px;margin:0 0 18px}
+h2{font-size:1.15rem;margin:0 0 .5em}
+audio{width:100%;margin:.2em 0 .6em}
+.speed{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--muted);margin-bottom:.4em}
+.speed button{font:inherit;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:5px;padding:2px 8px;margin-right:4px;cursor:pointer}
+.speed button.on{border-color:var(--accent);color:var(--accent)}
+details{border-top:1px solid var(--line);padding:.45em 0}
+summary{cursor:pointer;list-style:none;display:flex;gap:.5em;align-items:baseline}
+summary::-webkit-details-marker{display:none}
+.n{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);min-width:2.2em}
+.go{margin-left:auto;font-family:system-ui,sans-serif;font-size:.8rem;border:1px solid var(--line);background:var(--soft);color:var(--accent);border-radius:5px;padding:1px 7px;cursor:pointer;white-space:nowrap}
+.say{margin:.5em 0 .3em 2.7em}
+.inti{margin:0 0 .4em 2.7em;color:var(--warm);font-style:italic}
+.who{display:block;font-family:system-ui,sans-serif;font-size:.75rem;color:var(--muted)}
+footer{color:var(--muted);font-size:.85rem;margin-top:2em}
+</style>
+</head>
+<body>
+<main>
+<h1>Exam Answers</h1>
+<p class="sub">MSc Artificial Intelligence, JKU · Machine Learning and Perception (Hoedt, Klambauer, Hochreiter, Schlüter) and the thesis defense. Question, a 4-second pause to answer aloud, the spoken model answer in English, then the core sentence in Bahasa Indonesia. Book versions and derivations are in the PDF.</p>
+<a class="pdf" href="jawaban.pdf">PDF: book answers, derivations, spoken versions</a> <a class="pdf" href="index.html">← Committee guide</a>
+<div id="parts"></div>
+<footer>Answers are taken from the JKU lecture scripts (DLNN Basic Techniques WS25, DLNN SS25, ML Supervised Techniques, LSTM notes, RL slides) and the final thesis. Exam reports are students' personal experiences, not rules.</footer>
+</main>
+<script>
+fetch("jawaban.json").then(r=>r.json()).then(parts=>{
+  const root=document.getElementById("parts");
+  parts.forEach((p,i)=>{
+    const s=document.createElement("section");
+    const mins=Math.round(p.duration/60);
+    s.innerHTML=`<h2>${p.title.replace(" - "," · ")} <span class="n">${mins} min</span></h2>
+      <audio controls preload="none" src="${p.file}"></audio>
+      <div class="speed">Speed: ${[0.9,1,1.15,1.3].map(v=>`<button data-v="${v}" class="${v===1?'on':''}">${v}×</button>`).join("")}</div>`;
+    const a=s.querySelector("audio");
+    s.querySelectorAll(".speed button").forEach(b=>b.onclick=()=>{a.playbackRate=+b.dataset.v;s.querySelectorAll(".speed button").forEach(x=>x.classList.toggle("on",x===b))});
+    p.cards.forEach(c=>{
+      const d=document.createElement("details");
+      d.innerHTML=`<summary><span class="n">${c.n}</span><span>${c.q} <span class="who">${c.who}</span></span><button class="go">▶ ${Math.floor(c.t/60)}:${String(Math.floor(c.t%60)).padStart(2,"0")}</button></summary>
+        <p class="say">${c.say}</p><p class="inti">${c.inti}</p>`;
+      d.querySelector(".go").onclick=e=>{e.preventDefault();a.currentTime=c.t;a.play()};
+      s.appendChild(d);
+    });
+    root.appendChild(s);
+  });
+});
+</script>
+</body>
+</html>
