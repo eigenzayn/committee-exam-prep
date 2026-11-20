@@ -417,5 +417,68 @@
     "t": 1087.1
    }
   ]
+ },
+ {
+  "title": "Hoedt: optimisasi orde dua (bab yang ia tulis)",
+  "file": "audio/jawaban6.mp3",
+  "duration": 519.0,
+  "cards": [
+   {
+    "n": "F1",
+    "q": "Gradient descent is a first-order method. What does \"second order\" add?",
+    "say": "Gradient descent only uses the slope. You can show that each gradient step minimises a linear approximation of the loss plus a penalty on the step size, and the learning rate is just that penalty. Second-order methods also use the curvature, the Hessian, so they know whether the valley is narrow or wide in each direction. That usually gives much better steps and faster convergence. The price is the size of the Hessian: for P parameters it has P squared entries, which is impossible to store for a network with millions of weights. So in deep learning we use approximations.",
+    "inti": "GD adalah minimisasi model linear dan penalti langkah (eta adalah 1 per 2 lambda). Orde dua adalah pakai kelengkungan (Hessian), tapi memorinya P kuadrat.",
+    "who": "bab Hoedt (D2 Bab 14)",
+    "t": 7.3
+   },
+   {
+    "n": "F2",
+    "q": "Derive Newton's method. Why is it not used directly for deep networks?",
+    "say": "Newton's method looks for a point where the gradient is zero. I take the second-order Taylor expansion of the loss, so the gradient becomes linear in the weights, set it to zero and solve. The update is minus the inverse Hessian times the gradient. On a quadratic bowl this jumps to the minimum in a single step, whatever the curvature, because it divides by the curvature automatically. For deep networks it is not used directly for three reasons: the Hessian has P squared entries, inverting it costs P cubed, and far from the minimum, or at a saddle point, the Hessian is not positive definite, so the Newton step can even go uphill.",
+    "inti": "Newton: w baru adalah w dikurangi invers Hessian kali gradien. Kuadratik: satu langkah. Masalah: memori P kuadrat, invers P pangkat tiga, Hessian tak selalu definit positif.",
+    "who": "bab Hoedt (D2 Bab 14) · B5",
+    "t": 74.0
+   },
+   {
+    "n": "F3",
+    "q": "Line search versus trust region. What is the Armijo condition?",
+    "say": "Both are ways to decide how far to move. Line search first picks a direction, for example the negative gradient or the Newton direction, and then searches along that line for a good step size. A simple version is backtracking with the Armijo condition: start with a large step and shrink it until the loss decreases by at least a fixed fraction of what the slope predicts. Trust region turns it around. It first fixes a radius in which a local model of the loss is trusted, and then finds the best step inside that radius. With a quadratic model this gives the Hessian plus lambda times the identity, which is Newton when the step fits inside the region and closer to gradient descent when it does not.",
+    "inti": "Line search: arah dulu, lalu panjang langkah (Armijo: turun cukup). Trust region: radius dulu, lalu langkah terbaik di dalamnya: Hessian tambah lambda I.",
+    "who": "bab Hoedt (D2 Bab 14)",
+    "t": 146.5
+   },
+   {
+    "n": "F4",
+    "q": "How can we approximate the Hessian? What are quasi-Newton methods and BFGS?",
+    "say": "Since the full Hessian is too big, we approximate it. The cheapest way is to keep only its diagonal, one curvature value per weight, which costs one extra backward pass but ignores how weights interact. Quasi-Newton methods are smarter: they never compute second derivatives. They look at how the gradient changed between two steps. If the loss were quadratic, the change in gradient would be the Hessian times the change in weights, which is the secant condition. BFGS uses this to update an estimate of the inverse Hessian with two rank-one corrections per step, and it keeps the estimate positive definite, so the steps always point downhill. Then it does a line search along that direction.",
+    "inti": "Diagonal: murah, kasar. Quasi-Newton: Hessian ditaksir dari selisih gradien (syarat secant). BFGS: update rank dua, tetap definit positif, plus line search.",
+    "who": "bab Hoedt (D2 Bab 14)",
+    "t": 220.0
+   },
+   {
+    "n": "F5",
+    "q": "What is the conjugate gradient method?",
+    "say": "Steepest descent zig-zags in a long narrow valley, because each new direction partly undoes the previous one. Conjugate gradients avoid this: each new direction is a mix of the new negative gradient and the previous direction, chosen so that it is conjugate to the old one with respect to the Hessian. Then a step along the new direction does not spoil the minimisation already done along the old ones. On a quadratic with P parameters it finishes in at most P steps. The mixing factor beta can be computed from gradients only, for example with the Polak-Ribière formula, so we never need the Hessian itself.",
+    "inti": "Arah baru adalah beta kali arah lama dikurangi gradien baru, saling konjugat terhadap Hessian. Tanpa zig-zag, kuadratik selesai dalam paling banyak P langkah. Beta dari gradien saja.",
+    "who": "bab Hoedt (D2 Bab 14)",
+    "t": 296.7
+   },
+   {
+    "n": "F6",
+    "q": "Derive the Levenberg to Marquardt update.",
+    "say": "Levenberg-Marquardt is for least-squares problems. The gradient of half the squared residuals is the Jacobian transposed times the residuals, and the Hessian is approximately the Jacobian transposed times the Jacobian, which needs no second derivatives. I linearise the residuals, add a penalty lambda on the step size, and set the derivative to zero. That gives J transposed J plus lambda times the identity, times the step, equals minus the gradient. With small lambda it is a Newton-type step, with large lambda it becomes a small gradient-descent step. Lambda is adapted: if the error goes down we trust the model more and reduce lambda, otherwise we increase it. It is the same equation as a trust-region method.",
+    "inti": "J transpose J tambah lambda I, kali langkah, sama dengan minus J transpose r. Lambda kecil: Newton. Lambda besar: GD dengan langkah 1 per lambda. Sama dengan trust region.",
+    "who": "bab Hoedt (D2 Bab 14)",
+    "t": 364.1
+   },
+   {
+    "n": "F7",
+    "q": "What are natural gradients?",
+    "say": "Ordinary gradient descent measures the size of a step in parameter space, with the Euclidean norm. But two parameter changes of the same size can change the model's distribution very differently: moving the mean of a wide Gaussian by four changes much less than moving the mean of a narrow one. The natural gradient measures the step by how much the distribution changes, with the KL divergence. For small steps the KL divergence is approximately a quadratic form with the Fisher information matrix. Minimising the loss under that constraint gives the inverse Fisher matrix times the gradient. So it is like Newton's method, with the Fisher information playing the role of the Hessian, and the result does not depend on how we parameterise the model.",
+    "inti": "Natural gradient adalah invers Fisher kali gradien. Langkah diukur dengan KL di ruang distribusi, bukan jarak Euclid. Fisher adalah Hessian dari KL. Tak bergantung parameterisasi.",
+    "who": "bab Hoedt (D2 Bab 14)",
+    "t": 443.6
+   }
+  ]
  }
 ]
