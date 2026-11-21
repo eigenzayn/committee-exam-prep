@@ -4,15 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Exam Answers Audio</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <style>
-:root{--bg:#fbfaf7;--card:#fff;--ink:#1f2328;--muted:#667;--accent:#0b5cad;--soft:#eef4fb;--line:#dde3ea;--warm:#b03a2e}
-@media (prefers-color-scheme:dark){:root{--bg:#14171b;--card:#1c2026;--ink:#e6e8eb;--muted:#9aa3ad;--accent:#6aa9ec;--soft:#1f2a36;--line:#2c333b;--warm:#e2836f}}
+:root{--bg:#fbfaf7;--card:#fff;--ink:#1f2328;--muted:#667;--accent:#0b5cad;--soft:#eef4fb;--line:#dde3ea;--warm:#b03a2e;--ok:#2e7d4f;--mid:#b7791f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171b;--card:#1c2026;--ink:#e6e8eb;--muted:#9aa3ad;--accent:#6aa9ec;--soft:#1f2a36;--line:#2c333b;--warm:#e2836f;--ok:#5fbf86;--mid:#e0a84a}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Georgia,"Charis SIL",serif}
-main{max-width:760px;margin:0 auto;padding:24px 16px 80px}
+main{max-width:780px;margin:0 auto;padding:24px 16px 80px}
 h1{font-size:1.6rem;margin:.2em 0;color:var(--accent)}
 .sub{color:var(--muted);margin:0 0 1em}
-.pdf{display:inline-block;margin:.4em 0 1.2em;padding:.5em .9em;border:1px solid var(--accent);border-radius:6px;color:var(--accent);text-decoration:none;font-family:system-ui,sans-serif;font-size:.95rem}
+.btn,.pdf{display:inline-block;margin:.3em .3em .3em 0;padding:.45em .9em;border:1px solid var(--accent);border-radius:6px;color:var(--accent);background:transparent;text-decoration:none;font:500 .92rem system-ui,sans-serif;cursor:pointer}
+.btn.fill{background:var(--accent);color:#fff}
 section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 14px 6px;margin:0 0 18px}
 h2{font-size:1.15rem;margin:0 0 .5em}
 audio{width:100%;margin:.2em 0 .6em}
@@ -22,43 +26,171 @@ audio{width:100%;margin:.2em 0 .6em}
 details{border-top:1px solid var(--line);padding:.45em 0}
 summary{cursor:pointer;list-style:none;display:flex;gap:.5em;align-items:baseline}
 summary::-webkit-details-marker{display:none}
-.n{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);min-width:2.2em}
+.n{font-family:system-ui,sans-serif;font-size:.8rem;color:var(--muted);min-width:2.4em}
 .go{margin-left:auto;font-family:system-ui,sans-serif;font-size:.8rem;border:1px solid var(--line);background:var(--soft);color:var(--accent);border-radius:5px;padding:1px 7px;cursor:pointer;white-space:nowrap}
-.say{margin:.5em 0 .3em 2.7em}
-.inti{margin:0 0 .4em 2.7em;color:var(--warm);font-style:italic}
 .who{display:block;font-family:system-ui,sans-serif;font-size:.75rem;color:var(--muted)}
+.blk{margin:.5em 0 .4em 2.4em}
+.lbl{font:600 .78rem system-ui,sans-serif;letter-spacing:.02em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.15em}
+.kita{}
+.inti{color:var(--warm);font-style:italic}
+.sub-d{border-top:none;padding:.2em 0 .2em 2.4em}
+.sub-d>summary{font:600 .85rem system-ui,sans-serif;color:var(--accent)}
+.sub-d ol{padding-left:1.3em;margin:.3em 0}
+.sub-d li{margin:.25em 0}
+.why{border-top:1px dashed var(--line);padding:.35em 0 .35em 2.4em}
+.why>summary{font-style:italic;display:block}
+.sub-d>summary{display:block}
+.why>summary::before{content:"Why? ";font:600 .85rem system-ui,sans-serif;color:var(--warm);font-style:normal}
+.why p{margin:.3em 0 .2em 1em}
+.luar{font:.8rem system-ui,sans-serif;color:var(--warm)}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:.2em 0}
 footer{color:var(--muted);font-size:.85rem;margin-top:2em}
+/* mock exam */
+#mock{display:none}
+.setup label{display:inline-block;margin:.2em .8em .2em 0;font:.9rem system-ui,sans-serif}
+.qbox{font-size:1.15rem;margin:.4em 0 .2em}
+.prog{font:.82rem system-ui,sans-serif;color:var(--muted)}
+.reveal{display:none}
+.rate button{margin-right:.4em}
+.r-ok{border-color:var(--ok)!important;color:var(--ok)!important}
+.r-mid{border-color:var(--mid)!important;color:var(--mid)!important}
+.r-no{border-color:var(--warm)!important;color:var(--warm)!important}
+.sum li{margin:.2em 0}
 </style>
 </head>
 <body>
 <main>
 <h1>Exam Answers</h1>
-<p class="sub">MSc Artificial Intelligence, JKU · Machine Learning and Perception (Hoedt, Klambauer, Hochreiter, Schlüter) and the thesis defense. Question, a 4-second pause to answer aloud, the spoken model answer in English, then the core sentence in Bahasa Indonesia. Book versions and derivations are in the PDF.</p>
-<a class="pdf" href="jawaban.pdf">PDF: book answers, derivations, spoken versions</a> <a class="pdf" href="index.html">← Committee guide</a>
+<p class="sub">MSc Artificial Intelligence, JKU · Machine Learning and Perception (Hoedt, Klambauer, Hochreiter, Schlüter) and the thesis defense. Every card has the spoken answer, the core sentence, the book version with sources, the derivation step by step, and the examiner's “Why?” follow-ups.</p>
+<a class="pdf" href="jawaban.pdf">PDF</a> <a class="pdf" href="index.html">← Committee guide</a>
+<button class="btn fill" id="startMock">Mock exam (latihan)</button>
+
+<section id="mock">
+  <div id="setup" class="setup">
+    <h2>Mock exam</h2>
+    <p class="prog">Pilih bagian. Jawab dulu dengan suara keras, lalu buka jawabannya. Setelah itu jawab setiap “Why?” sebelum membukanya, lalu nilai diri sendiri.</p>
+    <div id="partChecks"></div>
+    <label><input type="checkbox" id="shuffle" checked> Acak urutan</label>
+    <div><button class="btn fill" id="go">Mulai</button><button class="btn" id="closeMock">Tutup</button></div>
+  </div>
+  <div id="run" style="display:none">
+    <div class="prog" id="prog"></div>
+    <div class="who" id="mWho"></div>
+    <div class="qbox" id="mQ"></div>
+    <button class="btn" id="showAns">Tampilkan jawaban</button>
+    <div class="reveal" id="ans"></div>
+    <div id="whyArea"></div>
+    <div class="rate reveal" id="rate">
+      <p class="prog">Seberapa baik jawaban Anda?</p>
+      <button class="btn r-ok" data-r="ok">Bisa</button><button class="btn r-mid" data-r="mid">Sebagian</button><button class="btn r-no" data-r="no">Belum</button>
+    </div>
+    <div><button class="btn" id="stopMock">Selesai</button></div>
+  </div>
+  <div id="summary" style="display:none"></div>
+</section>
+
 <div id="parts"></div>
 <footer>Answers are taken from the JKU lecture scripts (DLNN Basic Techniques WS25, DLNN SS25, ML Supervised Techniques, LSTM notes, RL slides) and the final thesis. Exam reports are students' personal experiences, not rules.</footer>
 </main>
 <script>
-fetch("jawaban.json").then(r=>r.json()).then(parts=>{
+const KOPT={delimiters:[{left:"\\[",right:"\\]",display:true},{left:"$",right:"$",display:false}],throwOnError:false};
+function tex(el){ if(window.renderMathInElement) renderMathInElement(el,KOPT); else setTimeout(()=>tex(el),150); }
+function store(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)||"null"); localStorage.setItem(k,JSON.stringify(v)); }catch(e){return null}}
+let DATA=[], audios=[];
+
+function cardBody(c){
+  let h=`<div class="blk kita"><span class="lbl">Versi kita</span>${c.kita}</div>
+         <div class="blk inti"><span class="lbl">Inti</span>${c.ingat}</div>`;
+  if(c.buku) h+=`<details class="sub-d"><summary>Versi buku (sumber)</summary><div>${c.buku}</div></details>`;
+  if(c.turunan) h+=`<details class="sub-d"><summary>Turunan rumus</summary><div>${c.turunan}</div></details>`;
+  return h;
+}
+function whyList(c){
+  return c.follow.map(f=>`<details class="why"><summary>${f.q}</summary><p>${f.a}</p></details>`).join("");
+}
+function fmt(t){return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0")}
+
+fetch("jawaban_full.json").then(r=>r.json()).then(parts=>{
+  DATA=parts;
   const root=document.getElementById("parts");
-  parts.forEach((p,i)=>{
+  parts.forEach((p,pi)=>{
     const s=document.createElement("section");
-    const mins=Math.round(p.duration/60);
-    s.innerHTML=`<h2>${p.title.replace(" - "," · ")} <span class="n">${mins} min</span></h2>
-      <audio controls preload="none" src="${p.file}"></audio>
-      <div class="speed">Speed: ${[0.9,1,1.15,1.3].map(v=>`<button data-v="${v}" class="${v===1?'on':''}">${v}×</button>`).join("")}</div>`;
-    const a=s.querySelector("audio");
+    const mins=Math.round((p.duration||0)/60);
+    s.innerHTML=`<h2>${p.title} <span class="n">${mins} min</span></h2>`+
+      (p.audio?`<audio controls preload="none" src="${p.audio}"></audio>
+      <div class="speed">Speed: ${[0.9,1,1.15,1.3].map(v=>`<button data-v="${v}" class="${v===1?'on':''}">${v}×</button>`).join("")}</div>`:"");
+    const a=s.querySelector("audio"); audios[pi]=a;
     s.querySelectorAll(".speed button").forEach(b=>b.onclick=()=>{a.playbackRate=+b.dataset.v;s.querySelectorAll(".speed button").forEach(x=>x.classList.toggle("on",x===b))});
     p.cards.forEach(c=>{
       const d=document.createElement("details");
-      d.innerHTML=`<summary><span class="n">${c.n}</span><span>${c.q} <span class="who">${c.who}</span></span><button class="go">▶ ${Math.floor(c.t/60)}:${String(Math.floor(c.t%60)).padStart(2,"0")}</button></summary>
-        <p class="say">${c.say}</p><p class="inti">${c.inti}</p>`;
-      d.querySelector(".go").onclick=e=>{e.preventDefault();a.currentTime=c.t;a.play()};
+      d.innerHTML=`<summary><span class="n">${c.n}</span><span>${c.q} <span class="who">${c.who}</span></span>${c.t!=null&&a?`<button class="go">▶ ${fmt(c.t)}</button>`:""}</summary>`+cardBody(c)+whyList(c);
+      const g=d.querySelector(".go"); if(g) g.onclick=e=>{e.preventDefault();a.currentTime=c.t;a.play()};
       s.appendChild(d);
     });
     root.appendChild(s);
   });
+  tex(root);
+  // mock setup
+  const pc=document.getElementById("partChecks");
+  const saved=store("mockParts")||[0,1,5];
+  pc.innerHTML=parts.map((p,i)=>`<label><input type="checkbox" value="${i}" ${saved.includes(i)?"checked":""}> ${String.fromCharCode(65+i)} · ${p.title}</label>`).join("<br>");
 });
+
+// ---------------- mock exam ----------------
+let Q=[], qi=0, res={}, wi=0;
+const $=id=>document.getElementById(id);
+$("startMock").onclick=()=>{ $("mock").style.display="block"; $("setup").style.display="block"; $("run").style.display="none"; $("summary").style.display="none"; $("mock").scrollIntoView({behavior:"smooth"}); };
+$("closeMock").onclick=()=>{ $("mock").style.display="none"; };
+$("go").onclick=()=>{
+  const sel=[...document.querySelectorAll("#partChecks input:checked")].map(x=>+x.value);
+  if(!sel.length) return;
+  store("mockParts",sel);
+  Q=[]; sel.forEach(pi=>DATA[pi].cards.forEach(c=>Q.push({pi,c})));
+  if($("shuffle").checked) for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+  qi=0; res={}; startRun();
+};
+function startRun(){ $("setup").style.display="none"; $("summary").style.display="none"; $("run").style.display="block"; showQ(); }
+function showQ(){
+  if(qi>=Q.length) return finish();
+  const {c}=Q[qi];
+  $("prog").textContent=`Pertanyaan ${qi+1} dari ${Q.length} · ${c.n}`;
+  $("mWho").innerHTML=c.who; $("mQ").innerHTML=c.q;
+  $("ans").style.display="none"; $("ans").innerHTML=""; $("whyArea").innerHTML=""; $("rate").style.display="none";
+  $("showAns").style.display="inline-block"; wi=0;
+  tex($("run"));
+}
+$("showAns").onclick=()=>{
+  const {c}=Q[qi];
+  $("showAns").style.display="none";
+  $("ans").innerHTML=cardBody(c); $("ans").style.display="block"; tex($("ans"));
+  nextWhy();
+};
+function nextWhy(){
+  const {c}=Q[qi];
+  if(wi>=c.follow.length){ $("rate").style.display="block"; return; }
+  const f=c.follow[wi];
+  const box=document.createElement("div"); box.className="why";
+  box.innerHTML=`<p><b style="color:var(--warm);font-family:system-ui">Why?</b> <i>${f.q}</i></p><button class="btn">Tampilkan jawaban Why</button><p class="reveal">${f.a}</p>`;
+  const b=box.querySelector("button"); b.onclick=()=>{b.remove(); box.querySelector(".reveal").style.display="block"; wi++; nextWhy();};
+  $("whyArea").appendChild(box); tex(box);
+}
+document.querySelectorAll("#rate button").forEach(b=>b.onclick=()=>{
+  const {c}=Q[qi]; res[c.n]=b.dataset.r;
+  const hist=store("mockHist")||{}; hist[c.n]=b.dataset.r; store("mockHist",hist);
+  qi++; showQ(); $("mock").scrollIntoView({behavior:"smooth"});
+});
+$("stopMock").onclick=finish;
+function finish(){
+  $("run").style.display="none";
+  const cnt={ok:0,mid:0,no:0}; Object.values(res).forEach(r=>cnt[r]++);
+  const weak=Q.filter(x=>res[x.c.n]&&res[x.c.n]!=="ok");
+  $("summary").innerHTML=`<h2>Rangkuman</h2><p>Bisa: <b>${cnt.ok}</b> · Sebagian: <b>${cnt.mid}</b> · Belum: <b>${cnt.no}</b> (dari ${Object.keys(res).length} dijawab)</p>`+
+    (weak.length?`<p>Ulangi kartu ini:</p><ul class="sum">${weak.map(x=>`<li>${x.c.n}: ${x.c.q} <span class="who">${res[x.c.n]==="no"?"Belum":"Sebagian"}</span></li>`).join("")}</ul><button class="btn fill" id="redo">Ulangi yang belum/sebagian</button>`:"<p>Semua dijawab dengan baik.</p>")+
+    `<button class="btn" id="again">Atur ulang</button>`;
+  $("summary").style.display="block"; tex($("summary"));
+  const r=$("redo"); if(r) r.onclick=()=>{Q=weak; qi=0; res={}; startRun();};
+  $("again").onclick=()=>{$("summary").style.display="none"; $("setup").style.display="block";};
+}
 </script>
 </body>
 </html>
