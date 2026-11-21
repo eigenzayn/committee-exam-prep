@@ -45,6 +45,9 @@ summary::-webkit-details-marker{display:none}
 .luar{font:.8rem system-ui,sans-serif;color:var(--warm)}
 .katex-display{overflow-x:auto;overflow-y:hidden;padding:.2em 0}
 footer{color:var(--muted);font-size:.85rem;margin-top:2em}
+.strat{background:var(--card);border:1px solid var(--warm);border-radius:10px;padding:10px 14px;margin:.6em 0 18px}
+.strat>summary{display:block;color:var(--warm);font-family:system-ui,sans-serif}
+.strat p,.strat ul{margin:.45em 0}
 /* mock exam */
 #mock{display:none}
 .setup label{display:inline-block;margin:.2em .8em .2em 0;font:.9rem system-ui,sans-serif}
@@ -64,6 +67,21 @@ footer{color:var(--muted);font-size:.85rem;margin-top:2em}
 <p class="sub">MSc Artificial Intelligence, JKU · Machine Learning and Perception (Hoedt, Klambauer, Hochreiter, Schlüter) and the thesis defense. Every card has the spoken answer, the core sentence, the book version with sources, the derivation step by step, and the examiner's “Why?” follow-ups.</p>
 <a class="pdf" href="jawaban.pdf">PDF</a> <a class="pdf" href="index.html">← Committee guide</a>
 <button class="btn fill" id="startMock">Mock exam (latihan)</button>
+
+<details class="strat" open>
+  <summary><b>Strategi ujian ML&amp;P (Hoedt)</b></summary>
+  <p><b>Email Hoedt (21 Nov 2026):</b> <i>“The ML exam aims to test everything you know about ML. It is up to you to figure out which topics to study in depth.”</i> Artinya: ujian bidang, bukan satu mata kuliah. Beliau tidak membatasi topik, dan memilih yang penting termasuk kompetensi. Laporan S29 dan T1: mulai dari fondasi, lalu backprop dan $\delta^{[l]}$, lalu optimisasi; gaya <i>Socratic</i> (definisi lalu sebab-akibat).</p>
+  <p><b>Prioritas:</b> (1) A1–A3, A6, A8–A9, B1–B4 · (2) bab tulisan Hoedt: A10–A13, B5, F1–F7 · (3) C1–C4, A4–A5, D1–D4.</p>
+  <p><b>Topik pembuka</b> (kalau ditanya <i>“Where would you like to start?”</i>): <i>“I'd like to start with how a neural network learns: empirical risk minimization and backpropagation.”</i></p>
+  <p><b>Bridging</b> (sambungkan ke topik yang dikuasai):</p>
+  <ul>
+    <li><i>“…and this recursion is also where vanishing gradients come from, which is why initialization matters.”</i></li>
+    <li><i>“Adam improves on this by adapting the step size per weight. I can write the update if you like.”</i></li>
+    <li><i>“For a linear model I can derive the closed form and show the link to maximum likelihood.”</i></li>
+  </ul>
+  <p><b>Kalau tidak tahu:</b> <i>“I'm not sure about the details, but from the basics I would reason like this…”</i> atau <i>“I don't remember the exact formula, but the idea is…”</i></p>
+  <p><b>Hindari:</b> “I only prepared X and Y”; menulis rumus dengan yakin padahal ragu. Jangan kirim daftar topik ke Hoedt.</p>
+</details>
 
 <section id="mock">
   <div id="setup" class="setup">
@@ -129,7 +147,7 @@ fetch("jawaban_full.json").then(r=>r.json()).then(parts=>{
     });
     root.appendChild(s);
   });
-  tex(root);
+  tex(root); tex(document.querySelector(".strat"));
   // mock setup
   const pc=document.getElementById("partChecks");
   const saved=store("mockParts")||[0,1,5];
